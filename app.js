@@ -26,10 +26,13 @@
     for (const id of ["adults", "children"]) {
       const select = $(id);
       select.replaceChildren();
-      for (let n = 0; n <= guest.max_seats; n++) select.add(new Option(String(n), String(n)));
+      const max = id === "adults" ? guest.max_adults : guest.max_children;
+      for (let n = 0; n <= max; n++) select.add(new Option(String(n), String(n)));
     }
-    $("adults").value = String(guest.rsvp?.adults ?? 1);
-    $("children").value = String(guest.rsvp?.children ?? 0);
+    const defaultAdults = Math.min(1, guest.max_adults);
+    const defaultChildren = defaultAdults ? 0 : 1;
+    $("adults").value = String(Math.min(guest.rsvp?.adults ?? defaultAdults, guest.max_adults));
+    $("children").value = String(Math.min(guest.rsvp?.children ?? defaultChildren, guest.max_children));
     if (guest.rsvp?.status === "declined") document.querySelector('[name="attendance"][value="no"]').checked = true;
     updateCounts();
   }
@@ -48,6 +51,7 @@
     $("guest-name").textContent = `¡Hola, ${guest.label}!`;
     $("seat-count").textContent = guest.max_seats;
     $("seat-word").textContent = guest.max_seats === 1 ? "lugar" : "lugares";
+    $("seat-detail").textContent = `${guest.max_adults} ${guest.max_adults === 1 ? "adulto" : "adultos"} · ${guest.max_children} ${guest.max_children === 1 ? "niño" : "niños"}`;
     $("deadline").textContent = guest.deadline_text || "";
     populate();
     $("guest-panel").hidden = false;
@@ -77,7 +81,7 @@
     const attending = document.querySelector('[name="attendance"]:checked').value === "yes";
     const adults = attending ? Number($("adults").value) : 0;
     const children = attending ? Number($("children").value) : 0;
-    if (attending && (adults + children < 1 || adults + children > guest.max_seats)) return;
+    if (attending && (adults + children < 1 || adults > guest.max_adults || children > guest.max_children)) return;
     $("submit-button").disabled = true;
     status("Guardando tu respuesta…");
     try {
@@ -95,7 +99,7 @@
   if (demo) {
     let saved = null;
     try { saved = JSON.parse(localStorage.getItem("lia-demo-rsvp")); } catch (_) {}
-    showGuest({label:"Familia de ejemplo",max_seats:4,deadline_text:"Vista previa: esta respuesta se guarda solo en este dispositivo.",rsvp:saved});
+    showGuest({label:"Familia de ejemplo",max_seats:4,max_adults:2,max_children:2,deadline_text:"Vista previa: esta respuesta se guarda solo en este dispositivo.",rsvp:saved});
   } else if (!token) {
     $("missing-link").hidden = false;
     status(isConfigured ? "" : "La confirmación en línea está en preparación.");
