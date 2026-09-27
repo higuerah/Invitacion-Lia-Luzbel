@@ -8,14 +8,16 @@ create table if not exists public.event_settings (
   deadline_text text not null default 'Confirma antes del 30 de septiembre.'
 );
 insert into public.event_settings(id, capacity, deadline)
-values (true, 60, '2026-10-01 00:00:00-07')
+values (true, 100, '2026-10-01 00:00:00-07')
 on conflict (id) do nothing;
 
 create table if not exists public.guests (
   id uuid primary key default gen_random_uuid(),
   token uuid not null unique default gen_random_uuid(),
   label text not null check (length(trim(label)) between 1 and 100),
-  max_seats integer not null check (max_seats between 1 and 30),
+  max_adults integer not null check (max_adults between 0 and 30),
+  max_children integer not null check (max_children between 0 and 30),
+  constraint places_per_invitation check (max_adults + max_children between 1 and 30),
   active boolean not null default true
 );
 
@@ -47,7 +49,8 @@ begin
   select * into v_rsvp from public.rsvps where guest_id = v_guest.id;
   select deadline into v_deadline from public.event_settings where id = true;
   return jsonb_build_object(
-    'label', v_guest.label, 'max_seats', v_guest.max_seats,
+    'label', v_guest.label, 'max_seats', v_guest.max_adults + v_guest.max_children,
+    'max_adults', v_guest.max_adults, 'max_children', v_guest.max_children,
     'deadline_text', (select deadline_text from public.event_settings where id = true),
     'rsvp', case when v_rsvp.guest_id is null then null else
       jsonb_build_object('status',v_rsvp.status,'adults',v_rsvp.adults,'children',v_rsvp.children) end
@@ -71,7 +74,7 @@ begin
   select * into v_guest from public.guests where token = p_token and active;
   if not found then raise exception 'No encontramos esta invitación.'; end if;
   if p_adults is null or p_children is null or p_adults < 0 or p_children < 0
-     or p_adults + p_children > v_guest.max_seats then
+     or p_adults > v_guest.max_adults or p_children > v_guest.max_children then
     raise exception 'Revisa los lugares reservados para esta invitación.';
   end if;
   v_status := case when p_adults + p_children = 0 then 'declined' else 'attending' end;
@@ -92,6 +95,6 @@ $$;
 revoke all on function public.get_invitation(uuid), public.submit_rsvp(uuid,integer,integer) from public;
 grant execute on function public.get_invitation(uuid), public.submit_rsvp(uuid,integer,integer) to anon;
 
--- Add invitees in the Table Editor: label and max_seats; leave id/token blank.
+-- Add invitees in the Table Editor: label, max_adults and max_children; leave id/token blank.
 -- Read total: select coalesce(sum(adults+children),0) from public.rsvps where status='attending';
 -- Unique link: https://higuerah.github.io/REPOSITORY/?i=TOKEN_FROM_GUESTS_TABLE
