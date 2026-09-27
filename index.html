@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c655e">
+  <meta name="description" content="Celebra con Lía Luzbel su albercada de cumpleaños en Bambú.">
+  <title>¡Albercada de Lía Luzbel!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar"><span class="flower">✿</span> Una invitación especial <span class="flower">✿</span></header>
+    <main>
+      <div class="poster" aria-label="Invitación a la albercada de cumpleaños de Lía Luzbel, 3 de octubre a las 3:00 p. m., Bambú Local de Eventos, Churubusco 219 casi esquina con Tabasco">
+        <img src="assets/invitacion.jpeg" alt="Invitación ilustrada tropical de Lía Luzbel con alberca, flores, regalos y los datos del evento" width="1206" height="2174">
+        <div class="water-shimmer" aria-hidden="true"></div>
+        <div class="sparkle s1" aria-hidden="true">✦</div><div class="sparkle s2" aria-hidden="true">✧</div><div class="sparkle s3" aria-hidden="true">✦</div>
+        <div class="blink blink-left" aria-hidden="true"></div><div class="blink blink-right" aria-hidden="true"></div>
+      </div>
+
+      <section class="card" aria-labelledby="rsvp-title">
+        <div class="eyebrow">🌺 &nbsp; NOS ENCANTARÁ VERTE</div>
+        <h1 id="rsvp-title">Confirma tu asistencia</h1>
+        <p class="intro">Cada invitación tiene lugares reservados. Confírmanos cuáles utilizarán para preparar todo con mucho cariño.</p>
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+        <div id="guest-panel" hidden>
+          <p class="guest-name" id="guest-name"></p>
+          <p class="allotment">Esta invitación tiene <strong id="seat-count"></strong> <span id="seat-word">lugares</span> reservados.</p>
+          <form id="rsvp-form">
+            <fieldset class="attendance">
+              <legend>¿Nos acompañarán?</legend>
+              <label><input type="radio" name="attendance" value="yes" checked><span>Sí, ahí estaremos 🎉</span></label>
+              <label><input type="radio" name="attendance" value="no"><span>No podremos asistir</span></label>
+            </fieldset>
+            <div id="counts" class="counts">
+              <p>De sus lugares reservados, ¿cuántos utilizarán?</p>
+              <div class="count-grid">
+                <label>Adultos <select id="adults" aria-label="Lugares para adultos"></select></label>
+                <label>Niños <select id="children" aria-label="Lugares para niños"></select></label>
+              </div>
+              <small id="remaining" aria-live="polite"></small>
+            </div>
+            <button class="primary" id="submit-button" type="submit">Confirmar asistencia <span aria-hidden="true">→</span></button>
+          </form>
+          <p class="deadline" id="deadline"></p>
+        </div>
+        <div id="missing-link" hidden>
+          <p>Abre el enlace personal que te enviaron para ver tus lugares reservados.</p>
+        </div>
+        <div id="success" class="success" hidden></div>
+      </section>
+
+      <div class="actions">
+        <a href="https://www.google.com/maps/search/?api=1&query=Churubusco+219+casi+esquina+con+Tabasco+Ciudad+Obregon+Sonora" target="_blank" rel="noopener noreferrer">📍 Cómo llegar</a>
+        <a href="data:text/calendar;charset=utf-8,BEGIN%3AVCALENDAR%0AVERSION%3A2.0%0APRODID%3A-%2F%2FLia%20Luzbel%2F%2FES%0ABEGIN%3AVEVENT%0AUID%3Alia-luzbel-20261003%40invitacion%0ADTSTART%3A20261003T220000Z%0ADTEND%3A20261004T020000Z%0ASUMMARY%3AAlbercada%20de%20Lia%20Luzbel%0ALOCATION%3ABambu%20Local%20de%20Eventos%2C%20Churubusco%20219%2C%20Ciudad%20Obregon%0AEND%3AVEVENT%0AEND%3AVCALENDAR" download="albercada-lia-luzbel.ics">🗓️ Agregar al calendario</a>
+      </div>
+      <p class="footer">Prepara tu traje de baño. ¡Te esperamos! 🌴</p>
+    </main>
+  </div>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
