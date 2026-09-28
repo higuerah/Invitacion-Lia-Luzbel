@@ -5,6 +5,7 @@ create table if not exists public.event_settings (
   id boolean primary key default true check (id),
   capacity integer not null check (capacity > 0),
   deadline timestamptz not null,
+  admin_email text not null default 'CAMBIA_POR_TU_CORREO',
   deadline_text text not null default 'Confirma antes del 30 de septiembre.'
 );
 insert into public.event_settings(id, capacity, deadline)
@@ -36,18 +37,35 @@ alter table public.guests enable row level security;
 alter table public.rsvps enable row level security;
 revoke all on public.event_settings, public.guests, public.rsvps from anon, authenticated;
 
+-- The dashboard is accessible only to the email owner who signs in by email link.
+create or replace function public.is_event_admin()
+returns boolean language sql stable security definer set search_path = ''
+as $$
+  select exists(select 1 from public.event_settings
+    where id = true and lower(admin_email) = lower(auth.jwt()->>'email'));
+$$;
+revoke all on function public.is_event_admin() from public;
+grant execute on function public.is_event_admin() to authenticated;
+grant select on public.event_settings to authenticated;
+grant select, insert, update, delete on public.guests to authenticated;
+grant select on public.rsvps to authenticated;
+create policy admin_read_settings on public.event_settings for select to authenticated
+  using (public.is_event_admin());
+create policy admin_manage_guests on public.guests for all to authenticated
+  using (public.is_event_admin()) with check (public.is_event_admin());
+create policy admin_read_rsvps on public.rsvps for select to authenticated
+  using (public.is_event_admin());
+
 create or replace function public.get_invitation(p_token uuid)
 returns jsonb
 language plpgsql security definer set search_path = ''
 as $$
 declare v_guest public.guests%rowtype;
 declare v_rsvp public.rsvps%rowtype;
-declare v_deadline timestamptz;
 begin
   select * into v_guest from public.guests where token = p_token and active;
   if not found then return null; end if;
   select * into v_rsvp from public.rsvps where guest_id = v_guest.id;
-  select deadline into v_deadline from public.event_settings where id = true;
   return jsonb_build_object(
     'label', v_guest.label, 'max_seats', v_guest.max_adults + v_guest.max_children,
     'max_adults', v_guest.max_adults, 'max_children', v_guest.max_children,
@@ -78,8 +96,9 @@ begin
     raise exception 'Revisa los lugares reservados para esta invitación.';
   end if;
   v_status := case when p_adults + p_children = 0 then 'declined' else 'attending' end;
-  select coalesce(sum(adults + children),0) into v_used
-    from public.rsvps where guest_id <> v_guest.id and status = 'attending';
+  select coalesce(sum(r.adults + r.children),0) into v_used
+    from public.rsvps r join public.guests g on g.id = r.guest_id
+    where r.guest_id <> v_guest.id and r.status = 'attending' and g.active;
   if v_status = 'attending' and v_used + p_adults + p_children > v_settings.capacity then
     raise exception 'Ya no quedan lugares disponibles. Comunícate con quien te invitó.';
   end if;
@@ -96,5 +115,5 @@ revoke all on function public.get_invitation(uuid), public.submit_rsvp(uuid,inte
 grant execute on function public.get_invitation(uuid), public.submit_rsvp(uuid,integer,integer) to anon;
 
 -- Add invitees in the Table Editor: label, max_adults and max_children; leave id/token blank.
--- Read total: select coalesce(sum(adults+children),0) from public.rsvps where status='attending';
+-- Read total: select coalesce(sum(r.adults+r.children),0) from public.rsvps r join public.guests g on g.id=r.guest_id where r.status='attending' and g.active;
 -- Unique link: https://higuerah.github.io/REPOSITORY/?i=TOKEN_FROM_GUESTS_TABLE
