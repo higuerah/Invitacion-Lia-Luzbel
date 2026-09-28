@@ -10,3 +10,5 @@
 @keyframes confirm-glow{0%,100%{opacity:.25;transform:scale(.985)}50%{opacity:.95;transform:scale(1.015)}}
 @keyframes confirm-sparkle{0%,100%{opacity:.25;transform:scale(.65) rotate(-12deg)}50%{opacity:1;transform:scale(1.12) rotate(13deg)}}
 @media(prefers-reduced-motion:reduce){.envelope-art,.envelope-sky span,.poster-confirm::before,.poster-confirm::after{animation:none}.poster-confirm::before{opacity:.45}.poster-confirm::after{opacity:.7}}
+
+.receipt-details{display:grid;gap:5px;margin:15px 0 10px;padding:13px 11px;border:1px solid #b9dec9;border-radius:12px;background:#fffdf4;color:#245e52;font-size:13px}.receipt-details strong{font-family:Fraunces,Georgia,serif;font-size:17px}.receipt-reminder{font-size:12px;color:#526f62;margin:8px 0!important}
