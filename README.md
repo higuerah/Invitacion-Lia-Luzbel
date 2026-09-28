@@ -1,6 +1,8 @@
 # Invitación interactiva de Lía Luzbel
 
-Página estática preparada para GitHub Pages. La ilustración original se conserva y tiene destellos, agua en movimiento y un parpadeo discreto. Respeta la preferencia `prefers-reduced-motion`.
+Página estática preparada para GitHub Pages. La ilustración tropical proporcionada por el usuario tiene destellos y agua en movimiento. Respeta la preferencia `prefers-reduced-motion`.
+
+La primera pantalla muestra la nueva ilustración tropical. Su botón rosa impreso tiene un área táctil que abre la pantalla de confirmación. La canción `assets/aloha-luzbel.mp3` se reproduce al tocar **Escuchar canción**; no se intenta reproducción automática. Flores y salpicaduras se lanzan en los segundos indicados en `app.js` (`cueSchedule`). Son marcas ajustables si se afina la sincronía escuchando el audio en el teléfono.
 
 ## Probar el diseño
 
