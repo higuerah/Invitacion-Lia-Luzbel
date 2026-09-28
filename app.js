@@ -125,7 +125,7 @@
     const r = guest.rsvp;
     const declined = r.status === "declined";
     const title = declined ? "Gracias por avisarnos 💛" : fresh ? "¡Qué alegría! Nos vemos pronto 🌺" : "Tu confirmación está registrada 🌺";
-    const detail = declined ? "Registramos que no podrán acompañarnos." : `Reservamos ${r.adults + r.children} ${r.adults + r.children === 1 ? "lugar" : "lugares"} para ustedes (${r.adults} adultos, ${r.children} niños).`;
+    const detail = declined ? "Registramos que no podrán acompañarnos." : `Reservamos ${r.adults + r.children} ${r.adults + r.children === 1 ? "lugar" : "lugares"} para ustedes (${r.adults} ${r.adults === 1 ? "adulto" : "adultos"}, ${r.children} ${r.children === 1 ? "niño" : "niños"}).`;
     $("success").replaceChildren();
     const h = document.createElement("h2"), p = document.createElement("p"), receipt = document.createElement("div"), reminder = document.createElement("p"), change = document.createElement("button");
     h.textContent = title; p.textContent = detail;
