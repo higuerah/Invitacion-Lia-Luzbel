@@ -9,16 +9,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <div class="page-shell">
-    <header class="topbar"><span class="flower">✿</span> Una invitación especial <span class="flower">✿</span><button class="music-button" id="music-button" type="button" aria-label="Reproducir canción">▶ Escuchar canción</button></header>
+    <header class="topbar" id="page-topbar" hidden><span class="flower">✿</span> Una invitación especial <span class="flower">✿</span><button class="music-button" id="music-button" type="button" aria-label="Pausar canción">Ⅱ Pausar canción</button></header>
     <main>
-      <div id="poster-stage">
+      <section id="envelope-stage" class="envelope-stage">
+        <div class="envelope-sky" aria-hidden="true"><span>🌺</span><span>✦</span><span>🌴</span></div>
+        <div class="envelope-card">
+          <div class="envelope-art" aria-hidden="true"><div class="envelope-flap"></div><div class="envelope-pocket"></div><div class="envelope-seal">L</div></div>
+          <p class="envelope-label">Una sorpresa para ti</p>
+          <h1 id="envelope-greeting">¡Hola! Recibiste una invitación 🌺</h1>
+          <p>La albercada de Lía Luzbel te espera.</p>
+          <button id="open-envelope" class="primary envelope-open" type="button">Abrir invitación 💌</button>
+          <small>Al abrirla comenzará la canción.</small>
+        </div>
+      </section>
+      <div id="poster-stage" hidden>
         <div id="personal-greeting" class="personal-greeting" hidden></div>
         <div class="poster" aria-label="Invitación a la albercada de cumpleaños de Lía Luzbel, 3 de octubre a las 3:00 p. m., Bambú Local de Eventos, Churubusco 219 casi esquina con Tabasco">
           <img src="assets/invitacion.jpeg?v=2" alt="Invitación ilustrada tropical de Lía Luzbel con alberca, flores, regalos y los datos del evento" width="864" height="1536">
+          <img class="motion-piece move-bambu" src="assets/invitacion.jpeg?v=2" alt="" aria-hidden="true">
+          <img class="motion-piece move-lia" src="assets/invitacion.jpeg?v=2" alt="" aria-hidden="true">
+          <img class="motion-piece move-girl" src="assets/invitacion.jpeg?v=2" alt="" aria-hidden="true">
+          <img class="motion-piece move-gifts" src="assets/invitacion.jpeg?v=2" alt="" aria-hidden="true">
+          <img class="motion-piece move-cta" src="assets/invitacion.jpeg?v=2" alt="" aria-hidden="true">
           <div class="water-shimmer" aria-hidden="true"></div>
           <div class="sparkle s1" aria-hidden="true">✦</div><div class="sparkle s2" aria-hidden="true">✧</div><div class="sparkle s3" aria-hidden="true">✦</div>
           <button id="open-rsvp" class="poster-confirm" type="button" aria-label="Confirmar asistencia; abrir formulario"></button>
@@ -69,6 +85,6 @@
   <div id="particle-layer" aria-hidden="true"></div>
   <audio id="song" src="assets/aloha-luzbel.mp3" preload="metadata"></audio>
   <script src="config.js?v=2"></script>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
