@@ -10,8 +10,10 @@
   let guest;
 
   function showStage(name) {
+    $("envelope-stage").hidden = name !== "envelope";
     $("poster-stage").hidden = name !== "poster";
     $("rsvp-stage").hidden = name !== "rsvp";
+    $("page-topbar").hidden = name === "envelope";
     window.scrollTo({top:0,behavior:"instant"});
     if (name === "rsvp") $("rsvp-title").focus({preventScroll:true});
   }
@@ -19,6 +21,19 @@
   $("back-to-poster").addEventListener("click", () => showStage("poster"));
 
   const song = $("song"), musicButton = $("music-button");
+  $("open-envelope").addEventListener("click", () => {
+    $("open-envelope").disabled = true;
+    $("envelope-stage").classList.add("opening");
+    // The play call must happen inside this tap for iPhone audio permissions.
+    song.play().then(() => {
+      musicButton.textContent = "Ⅱ Pausar canción";
+      musicButton.setAttribute("aria-label","Pausar canción");
+    }).catch(() => {
+      musicButton.textContent = "▶ Escuchar canción";
+      musicButton.setAttribute("aria-label","Reproducir canción");
+    });
+    setTimeout(() => showStage("poster"), 560);
+  });
   const cueSchedule = config.songCues || [
     {time:12.5,type:"flowers"}, {time:19.4,type:"splash"},
     {time:24.2,type:"flowers"}, {time:41,type:"splash"}
@@ -93,6 +108,7 @@
   }
   function showGuest(data) {
     guest = data;
+    $("envelope-greeting").textContent = `¡Hola, ${guest.label}! Recibiste una invitación 🌺`;
     $("personal-greeting").textContent = `¡Hola, ${guest.label}! 🌺 Te invito a mi albercada`;
     $("personal-greeting").hidden = false;
     $("guest-name").textContent = `¡Qué gusto invitarte, ${guest.label}!`;
