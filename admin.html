@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0c655e"><title>Panel de invitaciones · Lía Luzbel</title>
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
   <main class="admin-shell">
@@ -19,6 +19,16 @@
       <section class="admin-card"><div class="dashboard-top"><h2>Asistencia</h2><button id="logout" class="text-button" type="button">Salir</button></div>
         <div class="stats"><div><strong id="confirmed-total">0</strong><span>confirmados</span></div><div><strong id="confirmed-adults">0</strong><span>adultos</span></div><div><strong id="confirmed-children">0</strong><span>niños</span></div></div>
       </section>
+      <section class="admin-card" aria-labelledby="guest-status-title">
+        <div class="dashboard-top"><h2 id="guest-status-title">¿Quiénes van?</h2><button id="refresh-status" class="secondary" type="button">Actualizar lista</button></div>
+        <p>Lista de invitaciones y respuestas recibidas.</p>
+        <div class="status-groups">
+          <section class="status-group going"><h3>✅ Sí confirmaron <span id="going-count">0</span></h3><ul id="going-list"></ul></section>
+          <section class="status-group pending"><h3>⏳ Aún no responden <span id="pending-count">0</span></h3><ul id="pending-list"></ul></section>
+          <section class="status-group declined"><h3>💛 No asistirán <span id="declined-count">0</span></h3><ul id="declined-list"></ul></section>
+          <section class="status-group inactive" id="inactive-group" hidden><h3>Enlaces desactivados <span id="inactive-count">0</span></h3><ul id="inactive-list"></ul></section>
+        </div>
+      </section>
       <section class="admin-card"><h2>Nueva invitación</h2><p>Ejemplo: Dulce, 2 adultos y 3 niños. Sólo ella recibirá su enlace.</p>
         <form id="new-invite"><label>Nombre de quien recibe<input id="invite-name" required maxlength="100" placeholder="Dulce"></label>
           <div class="count-grid"><label>Adultos permitidos<input id="invite-adults" type="number" min="0" max="30" value="2" required></label><label>Niños permitidos<input id="invite-children" type="number" min="0" max="30" value="3" required></label></div>
@@ -31,6 +41,6 @@
   </main>
   <script src="config.js?v=3"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="admin.js?v=2"></script>
+  <script src="admin.js?v=3"></script>
 </body>
 </html>
