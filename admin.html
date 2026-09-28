@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0c655e"><title>Panel de invitaciones · Lía Luzbel</title>
+  <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+  <main class="admin-shell">
+    <a class="back-link" href="./">← Ver la invitación</a>
+    <header class="admin-header"><span>🌺 PANEL PRIVADO</span><h1>Invitaciones de Lía</h1><p>Crea un enlace para cada persona y decide sus lugares antes de enviarlo.</p></header>
+    <div id="admin-message" class="admin-message" role="status" aria-live="polite"></div>
+    <section id="setup-panel" class="admin-card" hidden><h2>Falta conectar las confirmaciones</h2><p>El diseño ya está listo. Para crear enlaces que guarden respuestas, conecta la base de datos en <code>config.js</code>.</p></section>
+    <section id="login-panel" class="admin-card" hidden>
+      <h2>Entrar al panel</h2><p>Te enviaremos un enlace de acceso a tu correo de administrador.</p>
+      <form id="login-form"><label>Tu correo<input id="admin-email" type="email" autocomplete="email" required placeholder="tu@correo.com"></label><button class="primary" type="submit">Enviar enlace de acceso</button></form>
+    </section>
+    <div id="dashboard" hidden>
+      <section class="admin-card"><div class="dashboard-top"><h2>Asistencia</h2><button id="logout" class="text-button" type="button">Salir</button></div>
+        <div class="stats"><div><strong id="confirmed-total">0</strong><span>confirmados / 100</span></div><div><strong id="confirmed-adults">0</strong><span>adultos</span></div><div><strong id="confirmed-children">0</strong><span>niños</span></div></div>
+      </section>
+      <section class="admin-card"><h2>Nueva invitación</h2><p>Ejemplo: Dulce, 2 adultos y 3 niños. Sólo ella recibirá su enlace.</p>
+        <form id="new-invite"><label>Nombre de quien recibe<input id="invite-name" required maxlength="100" placeholder="Dulce"></label>
+          <div class="count-grid"><label>Adultos permitidos<input id="invite-adults" type="number" min="0" max="30" value="2" required></label><label>Niños permitidos<input id="invite-children" type="number" min="0" max="30" value="3" required></label></div>
+          <div class="admin-buttons"><button class="primary" type="submit">Crear enlace personal</button><button class="secondary" id="preview" type="button">Ver ejemplo</button></div>
+        </form>
+      </section>
+      <section class="admin-card"><h2>Enlaces creados</h2><p>Comparte cada enlace únicamente con la persona indicada. Puedes ajustar o desactivar una invitación.</p><div id="guest-list"></div></section>
+    </div>
+    <section id="preview-panel" class="admin-card" hidden><h2>Prueba con Dulce</h2><p>Este ejemplo permite 2 adultos y 3 niños. La respuesta de prueba no cuenta para el evento.</p><a id="demo-link" class="secondary" href="./?demo=1&nombre=Dulce&adultos=2&ninos=3">Abrir invitación de ejemplo →</a></section>
+  </main>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="admin.js?v=1"></script>
+</body>
+</html>
