@@ -4,6 +4,7 @@
   const params = new URLSearchParams(location.search);
   const token = params.get("i");
   const demo = params.get("demo") === "1";
+  const demoKey = `lia-demo-${params.get("nombre") || "Dulce"}-${params.get("adultos") || 2}-${params.get("ninos") || 3}`;
   const config = window.RSVP_CONFIG || {};
   const isConfigured = /^https:\/\/.+\.supabase\.co\/?$/.test(config.supabaseUrl) && !!config.anonKey;
   let guest;
@@ -48,7 +49,9 @@
   }
   function showGuest(data) {
     guest = data;
-    $("guest-name").textContent = `¡Hola, ${guest.label}!`;
+    $("personal-greeting").textContent = `¡Hola, ${guest.label}! 🌺 Te invito a mi albercada`;
+    $("personal-greeting").hidden = false;
+    $("guest-name").textContent = `¡Qué gusto invitarte, ${guest.label}!`;
     $("seat-count").textContent = guest.max_seats;
     $("seat-word").textContent = guest.max_seats === 1 ? "lugar" : "lugares";
     $("seat-detail").textContent = `${guest.max_adults} ${guest.max_adults === 1 ? "adulto" : "adultos"} · ${guest.max_children} ${guest.max_children === 1 ? "niño" : "niños"}`;
@@ -87,7 +90,7 @@
     try {
       if (demo) {
         guest.rsvp = {status:attending ? "attending":"declined",adults,children};
-        localStorage.setItem("lia-demo-rsvp", JSON.stringify(guest.rsvp));
+        localStorage.setItem(demoKey, JSON.stringify(guest.rsvp));
       } else {
         const result = await rpc("submit_rsvp", {p_token:token,p_adults:adults,p_children:children});
         guest.rsvp = result.rsvp;
@@ -98,8 +101,13 @@
   });
   if (demo) {
     let saved = null;
-    try { saved = JSON.parse(localStorage.getItem("lia-demo-rsvp")); } catch (_) {}
-    showGuest({label:"Familia de ejemplo",max_seats:4,max_adults:2,max_children:2,deadline_text:"Vista previa: esta respuesta se guarda solo en este dispositivo.",rsvp:saved});
+    const demoName = (params.get("nombre") || "Dulce").slice(0,60);
+    const maxAdults = Math.max(0,Math.min(30,Number(params.get("adultos") ?? 2) || 0));
+    const maxChildren = Math.max(0,Math.min(30,Number(params.get("ninos") ?? 3) || 0));
+    const adults = maxAdults + maxChildren ? maxAdults : 2;
+    const children = maxAdults + maxChildren ? maxChildren : 3;
+    try { saved = JSON.parse(localStorage.getItem(demoKey)); } catch (_) {}
+    showGuest({label:demoName,max_seats:adults+children,max_adults:adults,max_children:children,deadline_text:"Vista previa: esta respuesta se guarda solo en este dispositivo.",rsvp:saved});
   } else if (!token) {
     $("missing-link").hidden = false;
     status(isConfigured ? "" : "La confirmación en línea está en preparación.");
