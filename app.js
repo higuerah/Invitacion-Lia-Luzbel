@@ -75,7 +75,7 @@
   async function rpc(name, args) {
     const response = await fetch(`${config.supabaseUrl.replace(/\/$/, "")}/rest/v1/rpc/${name}`, {
       method: "POST",
-      headers: {"content-type":"application/json", apikey:config.anonKey, Authorization:`Bearer ${config.anonKey}`},
+      headers: {"content-type":"application/json", apikey:config.anonKey},
       body: JSON.stringify(args)
     });
     const data = await response.json().catch(() => null);
