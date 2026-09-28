@@ -127,13 +127,22 @@
     const title = declined ? "Gracias por avisarnos 💛" : fresh ? "¡Qué alegría! Nos vemos pronto 🌺" : "Tu confirmación está registrada 🌺";
     const detail = declined ? "Registramos que no podrán acompañarnos." : `Reservamos ${r.adults + r.children} ${r.adults + r.children === 1 ? "lugar" : "lugares"} para ustedes (${r.adults} adultos, ${r.children} niños).`;
     $("success").replaceChildren();
-    const h = document.createElement("h2"), p = document.createElement("p"), change = document.createElement("button");
+    const h = document.createElement("h2"), p = document.createElement("p"), receipt = document.createElement("div"), reminder = document.createElement("p"), change = document.createElement("button");
     h.textContent = title; p.textContent = detail;
+    receipt.className = "receipt-details";
+    const invited = document.createElement("strong");
+    invited.textContent = `Invitación de ${guest.label}`;
+    const when = document.createElement("span"), where = document.createElement("span");
+    when.textContent = "📅 Sábado 3 de octubre · 3:00 p. m.";
+    where.textContent = "📍 Bambú, Churubusco 219 casi esquina con Tabasco";
+    receipt.append(invited, when, where);
+    reminder.className = "receipt-reminder";
+    reminder.textContent = "Guarda este enlace: podrás volver a abrir tu invitación y consultar tu respuesta cuando quieras.";
     change.textContent = "Modificar mi respuesta";
     change.className = "change-button";
     change.type = "button";
     change.addEventListener("click", () => {$("success").hidden = true; $("guest-panel").hidden = false;});
-    $("success").append(h,p,change);
+    $("success").append(h,p,receipt,reminder,change);
     $("success").hidden = false;
     $("guest-panel").hidden = true;
   }
