@@ -20,7 +20,7 @@
     const {data:{session}} = await client.auth.getSession();
     if (!session) {$("dashboard").hidden=true;$("login-panel").hidden=false;return;}
     const [settings,guestResult,rsvpResult] = await Promise.all([
-      client.from("event_settings").select("capacity").single(),
+      client.from("event_settings").select("id").single(),
       client.from("guests").select("id,token,label,max_adults,max_children,active").order("label"),
       client.from("rsvps").select("guest_id,status,adults,children")
     ]);
@@ -32,7 +32,7 @@
     $("confirmed-adults").textContent=activeConfirmed.reduce((n,r)=>n+r.adults,0);
     $("confirmed-children").textContent=activeConfirmed.reduce((n,r)=>n+r.children,0);
     $("confirmed-total").textContent=activeConfirmed.reduce((n,r)=>n+r.adults+r.children,0);
-    $("confirmed-total").nextElementSibling.textContent=`confirmados / ${settings.data.capacity}`;
+    $("confirmed-total").nextElementSibling.textContent=`confirmados de ${guests.filter(g=>g.active).reduce((n,g)=>n+g.max_adults+g.max_children,0)} lugares invitados`;
     const list=$("guest-list");list.replaceChildren();
     if (!guests.length) {list.textContent="Aún no hay invitaciones. Crea la primera arriba.";return;}
     for (const g of guests) {
