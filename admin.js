@@ -33,6 +33,31 @@
     $("confirmed-children").textContent=activeConfirmed.reduce((n,r)=>n+r.children,0);
     $("confirmed-total").textContent=activeConfirmed.reduce((n,r)=>n+r.adults+r.children,0);
     $("confirmed-total").nextElementSibling.textContent=`confirmados de ${guests.filter(g=>g.active).reduce((n,g)=>n+g.max_adults+g.max_children,0)} lugares invitados`;
+    const byGuest = new Map(rsvps.map(r => [r.guest_id, r]));
+    const groups = {going:[], pending:[], declined:[], inactive:[]};
+    for (const g of guests) {
+      const r = byGuest.get(g.id);
+      const kind = !g.active ? "inactive" : r?.status === "attending" ? "going" : r?.status === "declined" ? "declined" : "pending";
+      groups[kind].push({guest:g, response:r});
+    }
+    for (const [kind, entries] of Object.entries(groups)) {
+      const list = $(`${kind}-list`); list.replaceChildren();
+      $(`${kind}-count`).textContent = entries.length;
+      if (!entries.length && kind !== "inactive") {
+        const empty = document.createElement("li"); empty.className = "empty-status";
+        empty.textContent = kind === "going" ? "Todavía nadie." : kind === "pending" ? "Todos respondieron." : "Nadie por ahora.";
+        list.append(empty);
+      }
+      for (const {guest:g, response:r} of entries) {
+        const item = document.createElement("li"), name = document.createElement("strong"), detail = document.createElement("span");
+        name.textContent = g.label;
+        detail.textContent = kind === "going" ? `${r.adults} ${r.adults === 1 ? "adulto" : "adultos"} · ${r.children} ${r.children === 1 ? "niño" : "niños"}`
+          : kind === "pending" ? `Invitados: ${g.max_adults} adultos · ${g.max_children} niños`
+          : kind === "inactive" ? "Enlace desactivado" : "Avisó que no asistirá";
+        item.append(name, detail); list.append(item);
+      }
+    }
+    $("inactive-group").hidden = !groups.inactive.length;
     const list=$("guest-list");list.replaceChildren();
     if (!guests.length) {list.textContent="Aún no hay invitaciones. Crea la primera arriba.";return;}
     for (const g of guests) {
@@ -51,6 +76,11 @@
       controls.append(adultInput,childInput,save,copy,toggle);row.append(name,summary,controls);list.append(row);
     }
   }
+  $("refresh-status").addEventListener("click", async () => {
+    $("refresh-status").disabled = true;
+    try { await load(); msg("Lista actualizada."); }
+    finally { $("refresh-status").disabled = false; }
+  });
   function valid(a,c){return Number.isInteger(a)&&Number.isInteger(c)&&a>=0&&c>=0&&a+c>=1&&a+c<=30;}
   $("login-form").addEventListener("submit",async e=>{e.preventDefault();msg("Enviando enlace de acceso…");const {error}=await client.auth.signInWithOtp({email:$("admin-email").value.trim(),options:{emailRedirectTo:location.origin+location.pathname}});msg(error?error.message:"Revisa tu correo y abre el enlace para entrar al panel.",!!error);});
   $("logout").addEventListener("click",async()=>{await client.auth.signOut();await load();});
