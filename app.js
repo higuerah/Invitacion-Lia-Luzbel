@@ -9,6 +9,50 @@
   const isConfigured = /^https:\/\/.+\.supabase\.co\/?$/.test(config.supabaseUrl) && !!config.anonKey;
   let guest;
 
+  function showStage(name) {
+    $("poster-stage").hidden = name !== "poster";
+    $("rsvp-stage").hidden = name !== "rsvp";
+    window.scrollTo({top:0,behavior:"instant"});
+    if (name === "rsvp") $("rsvp-title").focus({preventScroll:true});
+  }
+  $("open-rsvp").addEventListener("click", () => showStage("rsvp"));
+  $("back-to-poster").addEventListener("click", () => showStage("poster"));
+
+  const song = $("song"), musicButton = $("music-button");
+  const cueSchedule = config.songCues || [
+    {time:12.5,type:"flowers"}, {time:19.4,type:"splash"},
+    {time:24.2,type:"flowers"}, {time:41,type:"splash"}
+  ];
+  let lastSongTime = 0;
+  const firedCues = new Set();
+  function burst(type) {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const layer = $("particle-layer"), count = type === "flowers" ? 16 : 22;
+    for (let n=0;n<count;n++) {
+      const particle=document.createElement("span");
+      particle.className=`particle ${type}`;
+      particle.textContent=type === "flowers" ? "🌺" : "💦";
+      particle.style.setProperty("--x",`${8+Math.random()*84}vw`);
+      particle.style.setProperty("--dx",`${-55+Math.random()*110}px`);
+      particle.style.setProperty("--delay",`${Math.random()*.7}s`);
+      particle.style.setProperty("--size",`${20+Math.random()*22}px`);
+      layer.append(particle);
+      particle.addEventListener("animationend",()=>particle.remove(),{once:true});
+    }
+  }
+  song.addEventListener("timeupdate",()=>{
+    const t=song.currentTime;
+    if(t < lastSongTime-1) firedCues.clear();
+    cueSchedule.forEach((cue,i)=>{if(!firedCues.has(i)&&t>=cue.time&&lastSongTime<cue.time+1.5){burst(cue.type);firedCues.add(i);}});
+    lastSongTime=t;
+  });
+  song.addEventListener("ended",()=>{firedCues.clear();lastSongTime=0;musicButton.textContent="↻ Escuchar de nuevo";musicButton.setAttribute("aria-label","Volver a reproducir canción");});
+  musicButton.addEventListener("click",async()=>{
+    if(!song.paused){song.pause();musicButton.textContent="▶ Seguir canción";musicButton.setAttribute("aria-label","Reanudar canción");return;}
+    try{await song.play();musicButton.textContent="Ⅱ Pausar canción";musicButton.setAttribute("aria-label","Pausar canción");}
+    catch{musicButton.textContent="▶ Toca para escuchar";}
+  });
+
   function status(message, error = false) {
     $("status").textContent = message;
     $("status").classList.toggle("error", error);
