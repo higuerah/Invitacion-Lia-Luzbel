@@ -4,7 +4,7 @@ create extension if not exists pgcrypto;
 create table if not exists public.event_settings (
   id boolean primary key default true check (id),
   deadline timestamptz not null,
-  admin_email text not null default 'CAMBIA_POR_TU_CORREO',
+  admin_email text not null default 'rah@live.com.mx',
   deadline_text text not null default 'Confirma antes del 30 de septiembre.'
 );
 insert into public.event_settings(id, deadline)
