@@ -2,7 +2,7 @@
 
 Página estática preparada para GitHub Pages. La ilustración tropical proporcionada por el usuario tiene destellos y agua en movimiento. Respeta la preferencia `prefers-reduced-motion`.
 
-La primera pantalla muestra la nueva ilustración tropical. Su botón rosa impreso tiene un área táctil que abre la pantalla de confirmación. La canción `assets/aloha-luzbel.mp3` se reproduce al tocar **Escuchar canción**; no se intenta reproducción automática. Flores y salpicaduras se lanzan en los segundos indicados en `app.js` (`cueSchedule`). Son marcas ajustables si se afina la sincronía escuchando el audio en el teléfono.
+La primera pantalla es un sobre personalizado. Al tocar **Abrir invitación**, se abre la ilustración tropical y se inicia `assets/aloha-luzbel.mp3` dentro del mismo gesto (necesario para audio en iPhone). El botón rosa impreso abre una segunda pantalla con la confirmación. La canción puede pausarse desde el encabezado. Flores y salpicaduras se lanzan en los segundos indicados en `app.js` (`cueSchedule`). Son marcas ajustables si se afina la sincronía escuchando el audio en el teléfono.
 
 ## Probar el diseño
 
