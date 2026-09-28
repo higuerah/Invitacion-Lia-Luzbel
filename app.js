@@ -101,7 +101,7 @@
     $("counts").hidden = !attending;
     const total = Number($("adults").value) + Number($("children").value);
     const remaining = guest.max_seats - total;
-    $("remaining").textContent = remaining < 0 ? `Supera sus ${guest.max_seats} lugares reservados.` : remaining === 0 ? "Están utilizando todos sus lugares reservados." : `Quedan ${remaining} de sus lugares sin utilizar.`;
+    $("remaining").textContent = remaining < 0 ? `Supera sus ${guest.max_seats} lugares reservados.` : remaining === 0 ? "Están utilizando todos sus lugares reservados." : remaining === 1 ? "Queda 1 de sus lugares sin utilizar." : `Quedan ${remaining} de sus lugares sin utilizar.`;
     $("remaining").classList.toggle("error", remaining < 0 || (attending && total === 0));
     if (attending && total === 0) $("remaining").textContent = "Elige al menos un lugar para confirmar.";
     $("submit-button").disabled = attending && (remaining < 0 || total === 0);
