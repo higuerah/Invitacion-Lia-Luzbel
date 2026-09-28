@@ -3,13 +3,12 @@ create extension if not exists pgcrypto;
 
 create table if not exists public.event_settings (
   id boolean primary key default true check (id),
-  capacity integer not null check (capacity > 0),
   deadline timestamptz not null,
   admin_email text not null default 'CAMBIA_POR_TU_CORREO',
   deadline_text text not null default 'Confirma antes del 30 de septiembre.'
 );
-insert into public.event_settings(id, capacity, deadline)
-values (true, 100, '2026-10-01 00:00:00-07')
+insert into public.event_settings(id, deadline)
+values (true, '2026-10-01 00:00:00-07')
 on conflict (id) do nothing;
 
 create table if not exists public.guests (
@@ -82,11 +81,9 @@ language plpgsql security definer set search_path = ''
 as $$
 declare v_guest public.guests%rowtype;
 declare v_settings public.event_settings%rowtype;
-declare v_used integer;
 declare v_status text;
 begin
-  -- Lock the one settings row so concurrent confirmations cannot overbook.
-  select * into v_settings from public.event_settings where id = true for update;
+  select * into v_settings from public.event_settings where id = true;
   if not found then raise exception 'La confirmación aún no está disponible.'; end if;
   if now() >= v_settings.deadline then raise exception 'Ya cerró el plazo de confirmación.'; end if;
   select * into v_guest from public.guests where token = p_token and active;
@@ -96,12 +93,6 @@ begin
     raise exception 'Revisa los lugares reservados para esta invitación.';
   end if;
   v_status := case when p_adults + p_children = 0 then 'declined' else 'attending' end;
-  select coalesce(sum(r.adults + r.children),0) into v_used
-    from public.rsvps r join public.guests g on g.id = r.guest_id
-    where r.guest_id <> v_guest.id and r.status = 'attending' and g.active;
-  if v_status = 'attending' and v_used + p_adults + p_children > v_settings.capacity then
-    raise exception 'Ya no quedan lugares disponibles. Comunícate con quien te invitó.';
-  end if;
   insert into public.rsvps(guest_id,status,adults,children)
     values(v_guest.id,v_status,p_adults,p_children)
     on conflict(guest_id) do update set status=excluded.status,
@@ -115,5 +106,5 @@ revoke all on function public.get_invitation(uuid), public.submit_rsvp(uuid,inte
 grant execute on function public.get_invitation(uuid), public.submit_rsvp(uuid,integer,integer) to anon;
 
 -- Add invitees in the Table Editor: label, max_adults and max_children; leave id/token blank.
--- Read total: select coalesce(sum(r.adults+r.children),0) from public.rsvps r join public.guests g on g.id=r.guest_id where r.status='attending' and g.active;
--- Unique link: https://higuerah.github.io/REPOSITORY/?i=TOKEN_FROM_GUESTS_TABLE
+-- The number of places comes from the invitations you create; there is no event-wide cap.
+-- Unique link: https://higuerah.github.io/Invitacion-Lia-Luzbel/?i=TOKEN_FROM_GUESTS_TABLE
